@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <set>
+#include <chrono>
 
 
 int main(){
@@ -12,6 +13,7 @@ int main(){
 
     input.open("Rowling_Harry_Potter_1_Sorcerer's_Stone.txt");
 
+    //input.open("simple.txt");
     std::string str;
 
     // динамический массив содержащий все слова из файла
@@ -74,24 +76,49 @@ int main(){
     }
 
     // проверим размер получившегося массива
-    std::cout << "Number of word in dictionary is: " << vecstr.size() << "\n\n";
+    std::cout << "All numbers of word in dictionary is: " << vecstr.size() << "\n\n";
 
     // заполнение нового массива уникальнымис словами
+    // используем вложенный цикл для сравнения нового слова со
+    // всеми уже уникальными добавленными в массив
     bool flag = true;
+    // переменная для сохранения системного времени, 
+    // точка отсчета начала цикла
+    auto start_time_vector = std::chrono::system_clock::now();
     for(int i = 0; i < vecstr.size(); ++i){
         for(int j = 0; j < unicstr.size(); ++j){
             if(vecstr.at(i) == unicstr.at(j)){
-                flag == false;
+                flag = false;
                 break;
             }
         }
         if (flag){
-            unicstr.at(unicstr.size()- 1) = vecstr.at(i);
+            unicstr.push_back(vecstr.at(i));
         }
+        flag = true;
     }
-
+    auto end_time_vector = std::chrono::system_clock::now();
+    auto diff_time_vector = std::chrono::duration_cast<std::chrono::milliseconds>(end_time_vector - 
+    start_time_vector);
     // проверка размера массива уникальных слов
-    std::cout << "Unic word into the file is: " << unicstr.size() << "\n\n";
+    std::cout << "Using a vector collection.\n";
+    std::cout << "Unic word into the file is: " << unicstr.size() << "\n";
+    std::cout << "Time for calculation unic list is: " << diff_time_vector.count() << " ms\n\n";
+
+
+    // теперь используем коллекцию set для подсчета 
+    // уникальных слов
+    start_time_vector = std::chrono::system_clock::now();
+    for(auto &i:vecstr){
+        unicstrset.insert(i);
+    }
+    end_time_vector = std::chrono::system_clock::now();
+    diff_time_vector = std::chrono::duration_cast<std::chrono::milliseconds>(end_time_vector - 
+    start_time_vector);
+    // проверка размера коллекции set уникальных слов
+    std::cout << "Using a set collection.\n";
+    std::cout << "Unic word into the file is: " << unicstrset.size() << "\n";
+    std::cout << "Time for calculation unic list is: " << diff_time_vector.count() << " ms\n";
 
     return 0;
 }
